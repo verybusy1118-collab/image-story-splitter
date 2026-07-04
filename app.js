@@ -235,7 +235,7 @@ async function buildActivity(images) {
       id: taskId,
       label: taskLabels[imageIndex] || `任務${imageIndex + 1}`,
       previewUrl: taskPieces[0].imageUrl,
-      pieceOrder: taskPieces.map((piece) => piece.id),
+      pieceOrder: shuffle(taskPieces.map((piece) => piece.id)),
       pieces: Object.fromEntries(taskPieces.map((piece) => [piece.id, piece]))
     });
   });
