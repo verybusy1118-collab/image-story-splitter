@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>圖片故事共編工具</title>
+  <link rel="stylesheet" href="styles.css?v=20260705-0140">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">課堂共作工具</p>
+        <h1>圖片故事共編</h1>
+      </div>
+      <button id="resetBtn" class="icon-btn" type="button" title="重新開始" aria-label="重新開始">↺</button>
+    </header>
+
+    <section id="teacherView">
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">雲端同步</p>
+            <h2>Firebase 設定</h2>
+          </div>
+          <button id="saveConfigBtn" type="button">儲存設定</button>
+        </div>
+        <p class="section-note">貼上 Firebase 網頁應用程式設定。這一版使用 Realtime Database，讓學生填寫與重組可以共編同步。</p>
+        <textarea id="firebaseConfigInput" class="config-input" placeholder='貼上 Firebase 設定，例如：const firebaseConfig = {...};'></textarea>
+        <p id="syncStatus" class="sync-status">尚未連線 Firebase</p>
+      </section>
+
+      <section class="setup-section">
+        <label class="file-drop" for="imageInput">
+          <span class="file-icon">＋</span>
+          <span>
+            <strong>教師上傳一張故事圖片</strong>
+            <small>教師可一次上傳多張圖片。系統會各自切成四張，再隨機混合，讓學生自行選擇。</small>
+          </span>
+        </label>
+        <input id="imageInput" type="file" accept="image/*" multiple>
+        <button id="shuffleBtn" type="button" disabled>重新隨機派發</button>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">教師派發</p>
+            <h2>一個連結給全班</h2>
+          </div>
+          <p class="section-note">教師只要讓學生從下方任務卡片進入。學生輸入小組與班級後，再一起完成填空與共編重組。</p>
+        </div>
+        <div id="linkCards" class="link-grid">
+          <div class="empty-card">請先完成 Firebase 設定，再上傳圖片</div>
+        </div>
+      </section>
+    </section>
+
+    <section id="joinView" class="hidden">
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">學生自選</p>
+            <h2>選一組圖片開始填寫</h2>
+          </div>
+          <button id="joinRebuildBtn" type="button">直接進入共編重組</button>
+        </div>
+        <p class="section-note">請選擇任務，輸入小組與班級後開始。相同小組與相同班級會進入同一份共編內容，填完後可一起排序。</p>
+        <div id="choiceCards" class="link-grid"></div>
+      </section>
+    </section>
+
+    <section id="studentView" class="student-view hidden">
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">學生填寫</p>
+            <h2 id="studentTitle">我的故事圖片</h2>
+          </div>
+          <div class="button-row">
+            <button id="goRebuildBtn" type="button">進入共編重組</button>
+            <button id="downloadStudentBtn" type="button">下載我的作品</button>
+          </div>
+        </div>
+        <p class="section-note">先在下方輸入對話或重點，再點圖片中原本的空白框位置。文字點可以編輯、移動、放大縮小或刪除。</p>
+        <article id="studentCard" class="piece-card single-card"></article>
+      </section>
+    </section>
+
+    <section id="rebuildView" class="hidden">
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">學生共編重組</p>
+            <h2>一起排列故事順序</h2>
+          </div>
+          <button id="downloadRebuildBtn" type="button">下載重組圖</button>
+        </div>
+        <p class="section-note">學生拖曳卡片調整順序，排序會同步給所有打開同一活動的人。</p>
+        <div id="rebuildBoard" class="rebuild-board"></div>
+      </section>
+    </section>
+
+    <canvas id="exportCanvas" width="900" height="700" hidden></canvas>
+  </main>
+
+  <script type="module" src="app.js?v=20260705-0143"></script>
+</body>
+</html>
