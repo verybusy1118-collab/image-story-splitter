@@ -31,6 +31,15 @@ const saveConfigBtn = document.querySelector("#saveConfigBtn");
 const syncStatus = document.querySelector("#syncStatus");
 
 const CONFIG_KEY = "imageStoryFirebaseConfig";
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBxgthP4UPtgvOK6CoLvSjEK2PmwVWSn_U",
+  authDomain: "image-story-splitter.firebaseapp.com",
+  projectId: "image-story-splitter",
+  storageBucket: "image-story-splitter.firebasestorage.app",
+  messagingSenderId: "1096978823722",
+  appId: "1:1096978823722:web:634d69b88052955151a153",
+  measurementId: "G-6L1XMSRGKN"
+};
 
 let app = null;
 let db = null;
@@ -95,7 +104,7 @@ function initFirebase(config) {
 function loadFirebaseConfig() {
   const saved = localStorage.getItem(CONFIG_KEY);
   if (!saved) {
-    setStatus("尚未儲存 Firebase 設定，請貼上設定後按儲存設定");
+    initFirebase(DEFAULT_FIREBASE_CONFIG);
     return;
   }
   firebaseConfigInput.value = saved;
