@@ -52,6 +52,7 @@ let movingPlacement = null;
 let unsubscribers = [];
 let draggedRebuildId = null;
 let activeGroup = null;
+let activeTaskId = "";
 
 function makeGroupId(className, groupName) {
   return `${className.trim()}__${groupName.trim()}`
@@ -61,7 +62,8 @@ function makeGroupId(className, groupName) {
 
 function groupParams() {
   if (!activeGroup) return "";
-  return `&class=${encodeURIComponent(activeGroup.className)}&group=${encodeURIComponent(activeGroup.groupName)}`;
+  const taskParam = activeTaskId ? `&task=${encodeURIComponent(activeTaskId)}` : "";
+  return `${taskParam}&class=${encodeURIComponent(activeGroup.className)}&group=${encodeURIComponent(activeGroup.groupName)}`;
 }
 
 function setStatus(message, ok = false) {
@@ -461,6 +463,7 @@ function showTaskView(activityId, taskId, className = "", groupName = "") {
     window.location.hash = `join=${activityId}`;
     return;
   }
+  activeTaskId = taskId;
   const groupId = makeGroupId(className, groupName);
   activeGroup = { className, groupName, groupId };
   teacherView.classList.add("hidden");
@@ -716,8 +719,9 @@ function makeToolButton(text, title, onClick, extraClass = "resize-placement") {
   return button;
 }
 
-function showRebuildView(activityId, className = "", groupName = "") {
+function showRebuildView(activityId, className = "", groupName = "", taskId = "") {
   if (!requireFirebase()) return;
+  activeTaskId = taskId;
   activeGroup = className && groupName ? { className, groupName, groupId: makeGroupId(className, groupName) } : null;
   teacherView.classList.add("hidden");
   joinView.classList.add("hidden");
@@ -738,7 +742,8 @@ function showRebuildView(activityId, className = "", groupName = "") {
 
 function renderRebuildBoard() {
   rebuildBoard.innerHTML = "";
-  tasks.forEach((task) => {
+  const visibleTasks = activeTaskId ? tasks.filter((task) => task.id === activeTaskId) : tasks;
+  visibleTasks.forEach((task) => {
     const taskSection = document.createElement("section");
     taskSection.className = "task-rebuild-group";
     const heading = document.createElement("h3");
@@ -885,7 +890,8 @@ function downloadStudentWork() {
 function downloadRebuildWork() {
   const orderedPieces = [];
   const renderedPieces = [];
-  tasks.forEach((task) => {
+  const visibleTasks = activeTaskId ? tasks.filter((task) => task.id === activeTaskId) : tasks;
+  visibleTasks.forEach((task) => {
     const group = activeGroup ? task.groups?.[activeGroup.groupId] : null;
     const groupPieces = group?.pieces || {};
     (task.piecesList || []).forEach((piece) => {
@@ -988,7 +994,7 @@ async function showFromHash() {
     return;
   }
   if (rebuildId && await loadActivity(rebuildId)) {
-    showRebuildView(rebuildId, hash.get("class") || "", hash.get("group") || "");
+    showRebuildView(rebuildId, hash.get("class") || "", hash.get("group") || "", taskId || "");
     return;
   }
   if (activityId && await loadActivity(activityId)) {
